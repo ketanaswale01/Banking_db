@@ -108,7 +108,7 @@ The database follows a relational structure with the following relationships:
                             │
                 ┌───────────┼───────────┐
                 │           │           │
-                ▼           ▼           ▼
+                ▼           ▼           │
           ┌──────────┐ ┌──────────┐ ┌────
           │ Accounts │ │  Loans   │ │         
           └────┬─────┘ └──────────┘ │         

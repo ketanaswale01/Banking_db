@@ -388,9 +388,6 @@ ORDER BY TransactionDate DESC;
 -- LAB 6
 -- =============================================
 
--- ====================================
--- Task 1
-
 -- String Function
 SELECT
 FirstName,
@@ -475,10 +472,6 @@ SELECT
     NULLIF(FirstName,'Priya') AS Result
 FROM Customers;
 
--- =======================================
--- Task 2
--- =======================================
-
 SELECT SUM(Balance) as total_balance
 FROM Accounts;
 
@@ -494,19 +487,12 @@ FROM Accounts;
 SELECT COUNT(*) AS total_accounts
 FROM Accounts;
 
--- ======================================
--- Task 3
--- ======================================
-
 SELECT 
     AccountType,
     SUM(Balance) AS TotalBalance
 FROM Accounts
 GROUP BY AccountType;
 
--- =====================================
--- Task 4
--- =====================================
 
 SELECT 
     AccountType,
@@ -521,10 +507,6 @@ HAVING SUM(Balance) > 25000;
 -- =============================================
 
 use bankingdb;
-
--- =====================================
--- Task 1
--- =====================================
 
 Select
     LoanID,
@@ -575,12 +557,8 @@ FROM Loans;
 
 
 -- =============================================
--- LAB 8
+-- LAB 8 -- Joins
 -- =============================================
-
--- =====================================
--- INNER JOIN
--- =====================================
 
 SELECT
     a.AccountID, a.AccountType, a.Balance,
@@ -592,10 +570,6 @@ FROM Accounts a
 INNER JOIN Transactions t
 ON a.AccountID = t.AccountID;
 
--- =====================================
--- LEFT JOIN
--- =====================================
-
 SELECT
     a.AccountID, a.AccountType, a.Balance,
     t.TransactionID,
@@ -605,10 +579,6 @@ SELECT
 FROM Accounts a
 LEFT JOIN Transactions t
 ON a.AccountID = t.AccountID;
-
--- =====================================
--- TASK 3
--- =====================================
 
 SELECT
     a.AccountID, a.AccountType, a.Balance,
@@ -621,10 +591,6 @@ INNER JOIN Transactions t
 ON a.AccountID = t.AccountID
 WHERE t.TransactionType = 'Deposit';
 
--- =====================================
--- TASK 4
--- =====================================
-
 SELECT
     a.AccountID, a.AccountType, a.Balance,
     t.TransactionID,
@@ -636,3 +602,73 @@ INNER JOIN Transactions t
 ON a.AccountID = t.AccountID
 WHERE a.Balance > 30000
 ORDER BY a.Balance DESC;
+
+
+-- =============================================
+-- LAB 9 -- Subquery
+-- =============================================
+
+select * from transactions
+where amount >
+	(select avg(amount) from transactions);
+    
+SELECT AccountID,AccountType,Balance,CustomerID
+FROM Accounts
+WHERE Balance >
+(
+    SELECT AVG(Balance)
+    FROM Accounts
+)
+ORDER BY Balance DESC;
+
+SELECT AccountID,AccountType,Balance,CustomerID
+FROM Accounts
+WHERE AccountID IN
+(
+    SELECT AccountID
+    FROM Transactions
+    WHERE TransactionType = 'Deposit'
+);
+
+SELECT AccountID,AccountType,Balance,CustomerID
+FROM Accounts
+WHERE Balance =
+(
+    SELECT MAX(Balance)
+    FROM Accounts
+);
+
+
+-- =============================================
+-- LAB 10 -- View 
+-- =============================================
+
+create view High_Balance_Account as
+select * from Accounts
+where balance > 30000;
+select * from High_Balance_account;
+
+CREATE OR REPLACE VIEW High_Balance_Accounts AS
+SELECT
+    a.AccountID, a.AccountType, a.Balance, a.CustomerID,
+    t.TransactionID,
+    t.TransactionDate,
+    t.TransactionType,
+    t.Amount
+FROM Accounts a
+INNER JOIN Transactions t
+ON a.AccountID = t.AccountID
+WHERE a.Balance > 30000;
+
+SELECT
+    AccountID,
+    AccountType,
+    Balance,
+    CustomerID,
+    TransactionID,
+    TransactionDate,
+    TransactionType,
+    Amount
+FROM High_Balance_Accounts
+ORDER BY Balance DESC;
+
